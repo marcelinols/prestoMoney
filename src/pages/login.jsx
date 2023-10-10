@@ -1,15 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { auth } from '../firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
 
     const [error, setError] = useState(false);
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
+    const [password, setPassword] = useState(""); 
     const navigate = useNavigate();
+    const { currentUser } = useAuth();
 
     const handdleLogin = (e) => {
         e.preventDefault();
@@ -17,13 +18,19 @@ export default function Login() {
         setError("");
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                const user = userCredential.user;
+                const user = userCredential.user; 
                 console.log(user);
                 navigate('/')
             }).catch((error) => {
                 setError(error.code + ' ' + error.message);
             });
     }
+
+    useEffect(() => {
+        if (currentUser) {
+            navigate("/")
+        }
+    }, []);
 
     return (
         <div>

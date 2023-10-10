@@ -1,5 +1,5 @@
+import React, { useState, useEffect } from "react";
 import { collection, getDocs, query, collectionGroup } from "firebase/firestore";
-import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
 
@@ -8,6 +8,7 @@ export default function Home() {
     const [todos, setTodos] = useState([]);
     const [total, setTotal] = useState(0);
     const { currentUser, logout } = useAuth();
+
 
 
     const fetchPost = async () => {
@@ -35,7 +36,7 @@ export default function Home() {
     }
 
     useEffect(() => {
-        fetchPost();
+        console.log("")
     }, [])
 
     return (
