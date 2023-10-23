@@ -1,0 +1,33 @@
+
+:root {
+  --azul: #1a1e5e; 
+  --blanco: #ffffff;
+}
+.cards{
+    border-radius: 0% 0% 50% 50%;
+    background-color: var(--azul); 
+    position: relative;
+    margin: -16px;
+    padding-top: 25px;
+    margin-bottom: 5px;
+}
+.title {
+    color: var(--azul);
+}
+.btn-login{
+    color: var(--blanco);
+    background-color: var(--azul);
+    border-color: var(--azul);
+    border-radius: 25px;
+    border: 1px;
+    padding: 12px;
+}
+
+.img-logo{
+    align-items: center;
+    border-radius: 50%;
+}
+
+.label{
+    color: var(--azul);
+}

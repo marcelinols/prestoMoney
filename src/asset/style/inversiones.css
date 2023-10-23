@@ -1,0 +1,13 @@
+.history {
+    margin-top: 10px;
+    box-shadow: 7px 6px 30px -15px rgba(0,0,0,0.11);
+    border-radius: 10px;
+    background-color: var(--blanco);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-add{
+    position: relative;
+    top: 40px; 
+}

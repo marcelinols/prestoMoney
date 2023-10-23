@@ -1,0 +1,46 @@
+:root {
+  --azul: #1a1e5e; 
+  --blanco: #ffffff;
+  --font-amount : 'Roboto', sans-serif;
+}
+
+.navigation{
+    background-color: var(--blanco);
+}
+
+.card-total {
+    background-color: var(--azul);
+    color: var(--blanco);
+    font-family: var(--font-amount);
+    min-height: 120px; 
+}
+
+.card-mount {
+    color: var(--azul); 
+    background-color: var(--blanco);
+    border-radius: 5px;
+    position: absolute;
+    width: 160px;
+    min-height: 40px;
+    padding: 10px;
+    box-shadow: 7px 6px 30px -15px rgba(0,0,0,0.75);
+}
+
+.resume {
+    margin-top: 100px;
+    box-shadow: 7px 6px 30px -15px rgba(0,0,0,0.11);
+    border-radius: 10px;
+    background-color: var(--blanco);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.fonts{
+    font-family: 'Quicksand', sans-serif;
+}
+
+.avatars { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,67 @@
+:root {
+  --azul: #1a1e5e; 
+  --blanco: #ffffff;
+  --rojo: #ff1111;
+  --gris :#c5c5c5;
+}
+.history {
+    margin-top: 10px;
+    box-shadow: 7px 6px 30px -15px rgba(0,0,0,0.11);
+    border-radius: 10px;
+    background-color: var(--blanco);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+
+.btn-new{
+    color: var(--blanco);
+    background-color: var(--azul);
+    border-color: var(--azul);
+    border-radius: 25px;
+    border: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.btn-new:hover{
+    text-decoration: none; 
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
+}
+
+.btn-delete{
+    color: var(--blanco);
+    background-color: var(--rojo);
+    border-color: var(--rojo);
+    border-radius: 25px;
+    border: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.btn-delete:hover{
+    text-decoration: none; 
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
+}
+
+.btn-default{
+    color: var(--blanco);
+    background-color: var(--gris);
+    border-color: var(--gris);
+    border-radius: 25px;
+    border: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.btn-default:hover{
+    text-decoration: none; 
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
+}
+

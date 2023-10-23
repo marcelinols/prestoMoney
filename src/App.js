@@ -4,13 +4,13 @@ import Home from './pages/home';
 import Login from './pages/login';
 import Prestamos from './pages/prestamos';
 import Inversiones from './pages/inversiones';
+import Users from './pages/users';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Container } from 'react-bootstrap';
-import PrivateRoute from './pages/privateRoute'
+import PrivateRoute from './utils/privateRoute'
 
 function App() {
   return ( 
-    <Container>
+    <>
       <BrowserRouter>
         <AuthProvider>
           <Routes>
@@ -30,10 +30,16 @@ function App() {
                 <Inversiones />
               </PrivateRoute>
             } />
+            <Route path="/usuarios" element={
+              <PrivateRoute>
+                <Users />
+              </PrivateRoute>
+            } />
           </Routes>
         </AuthProvider>
-      </BrowserRouter>
-    </Container>
+      </BrowserRouter> 
+
+    </>
   )
 }
 
