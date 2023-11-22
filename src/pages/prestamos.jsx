@@ -135,7 +135,6 @@ export default function Prestamos() {
 
         const fecha = new Date();
         const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
-        console.log(datesPay, "dates");
         var date1 = new Date(datesPay);
         var date2 = new Date(today);
 
@@ -144,7 +143,7 @@ export default function Prestamos() {
 
         // To calculate the no. of days between two dates 
         var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-        console.log(Difference_In_Days, "days1");
+
         const intereses = ((12 * 8) / 365) * parseInt(Difference_In_Days);
         const tot = amounts * (parseFloat(intereses).toFixed(2) / 100);
         return Number.parseFloat(tot).toFixed(2);
