@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
+import { Badge, Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
 import Navbars from "../components/navbar";
 import { format, stringAvatar, suma } from '../utils/funtions'
 import { Avatar } from '@mui/material';
@@ -23,6 +23,7 @@ export default function Prestamos() {
 
     const [loan, setLoan] = React.useState(0.0);
     const [show, setShow] = React.useState(false); 
+    const [showdetail, setShowdetail] = React.useState(false); 
     const [error, setError] = React.useState(false)
     const [msgError, setMsgError] = React.useState('');
 
@@ -130,6 +131,25 @@ export default function Prestamos() {
         }
     }
 
+    const value_interes = (datesPay, amounts) => {
+
+        const fecha = new Date();
+        const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
+        console.log(datesPay, "dates");
+        var date1 = new Date(datesPay);
+        var date2 = new Date(today);
+
+        // To calculate the time difference of two dates 
+        var Difference_In_Time = date2.getTime() - date1.getTime();
+
+        // To calculate the no. of days between two dates 
+        var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+        console.log(Difference_In_Days, "days1");
+        const intereses = ((12 * 8) / 365) * parseInt(Difference_In_Days);
+        const tot = amounts * (parseFloat(intereses).toFixed(2) / 100);
+        return Number.parseFloat(tot).toFixed(2);
+    }
+
 
     React.useEffect(() => {
         all_loans(); 
@@ -166,7 +186,7 @@ export default function Prestamos() {
                                                 {dato.created_at}
                                             </Col>
                                             <Col xs={4} md={3}>
-                                                <p bg="light" text="dark" >{format(dato.amount)} </p>
+                                                <p bg="light" text="dark" >{format(dato.amount)} <Badge bg="danger">$ {value_interes(dato.created_at, dato.amount)}</Badge> </p>
                                             </Col>
                                         </Row>
                                     </ListGroup.Item>
