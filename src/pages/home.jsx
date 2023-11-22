@@ -1,48 +1,24 @@
 import React, { useEffect } from "react";
-import { collection, getDocs, query, collectionGroup, getFirestore } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
-import { Col, Row, Container, Tab, Tabs, ListGroup, Badge } from 'react-bootstrap';
+import { Col, Row, Container, Tab, Tabs, ListGroup } from 'react-bootstrap';
 import { MoneyOff, PriceChange } from '@mui/icons-material';
 import { Avatar } from "@mui/material";
 
 import Navbars from "../components/navbar";
 import { format, stringAvatar, suma } from '../utils/funtions'
 import '../asset/style/home.css'
-import { app } from "../firebase";
+import { useSelector } from "react-redux"; 
 
 export default function Home() {
 
-    const [investment, setInvestment] = React.useState(0.0);
-    const [investments, setInvestments] = React.useState([]);
-    const [loan, setLoan] = React.useState(0.0);
-    const [loans, setLoans] = React.useState([]);
+    const all_investment = useSelector(status => status.inversiones)
+    const all_loans = useSelector(status => status.prestamos)
+
+    const [investment, setInvestment] = React.useState(0.0); 
+    const [loan, setLoan] = React.useState(0.0); 
 
     const { currentUser, logout } = useAuth();
 
-    const db = getFirestore(app);
-
-    const all_datas = async () => {
-
-        await getDocs(collection(db, "inversiones"))
-            .then((querySnapshot) => {
-                const data = querySnapshot.docs.map(
-                    (doc) => (
-                        { ...doc.data(), id: doc.id }
-                    ));
-                setInvestment(suma(data));
-                setInvestments(data);
-            });
-
-        await getDocs(collection(db, "prestamos"))
-            .then((querySnapshot) => {
-                const datas = querySnapshot.docs.map(
-                    (doc) => (
-                        { ...doc.data(), id: doc.id }
-                    ));
-                setLoan(suma(datas));
-                setLoans(datas);
-            });
-    }
 
     const fetchPost = async () => {
 
@@ -69,8 +45,9 @@ export default function Home() {
     }
 
     useEffect(() => {
-        all_datas(); 
-    }, [])
+        setInvestment(suma(all_investment));
+        setLoan(suma(all_loans));
+    }, [all_investment, all_loans])
 
 
     return (
@@ -106,7 +83,7 @@ export default function Home() {
                             <Tab eventKey="inversiones" title="Inversiones">
                                 <ListGroup as="ol" className="m-2">
                                     {
-                                        investments.map((dato) =>
+                                        all_investment.map((dato) =>
                                             <ListGroup.Item key={dato.id} as="li"
                                                 className=" justify-content-between align-items-start">
                                                 <Row>
@@ -128,7 +105,7 @@ export default function Home() {
                             <Tab eventKey="prestamos" title="Prestamos">
                                 <ListGroup as="ol" className="m-2">
                                     {
-                                        loans.map((dato) =>
+                                        all_loans.map((dato) =>
                                             <ListGroup.Item key={dato.id} as="li"
                                                 className=" justify-content-between align-items-start">
                                                 <Row>

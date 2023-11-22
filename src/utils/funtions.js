@@ -4,6 +4,10 @@ const format = (val) => {
     return '$ ' + val.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
+const format_numbers = (val) => {
+    return val.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
 const stringAvatar = (name) => {
     return {
         sx: {
@@ -21,4 +25,4 @@ const suma = (datos) => {
     return sum;
 }
 
-export { format, stringAvatar, suma }
+export { format, stringAvatar, suma, format_numbers }

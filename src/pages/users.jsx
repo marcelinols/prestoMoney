@@ -6,14 +6,14 @@ import { Avatar } from '@mui/material';
 import { stringAvatar } from '../utils/funtions'
 import { app } from '../firebase'
 import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
-import { useAuth } from '../context/AuthContext';
-import { useDispatch } from 'react-redux';
-import { addUsers } from '../hook/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { addUser } from '../hook/actions';
 
 export default function Users() {
 
-    const [show, setShow] = React.useState(false);
-    const [user, setUser] = React.useState([]);
+    const list_users = useSelector(status => status.users)
+
+    const [show, setShow] = React.useState(false); 
     const [nombre, setNombre] = React.useState("");
     const [apellido, setApellido] = React.useState("");
     const [correo, setCorreo] = React.useState("");
@@ -22,36 +22,21 @@ export default function Users() {
     const db = getFirestore(app);
     const dispatch = useDispatch();
 
-    const all_user = async () => {
-        await getDocs(collection(db, "users"))
-            .then((querySnapshot) => {
-                const newDatas = querySnapshot.docs.map(
-                    (doc) => (
-                        { ...doc.data(), id: doc.id }
-                    ));
-                setUser(newDatas);
-                dispatch(addUsers(newDatas));
-            });
-    }
-
-    React.useEffect(() => {
-        all_user();
-
-    }, [])
-
     const handleUser = async (e) => {
         e.preventDefault();
         try {
-            const docRef = await addDoc(collection(db, "users"), {
+            const data = {
                 username: nombre + " " + apellido,
                 email: correo,
                 phone: telefono,
                 status: true,
                 avatar: "null",
                 uid: "-"
-            });
+            };
+
+            const docRef = await addDoc(collection(db, "users"), data);
             console.log("Document written with ID: ", docRef.id);
-            all_user();
+            dispatch(addUser(data))
             setShow(false);
             setNombre("")
             setApellido("")
@@ -73,7 +58,7 @@ export default function Users() {
                         <button className="btn-new" onClick={() => { setShow(true) }}> Nuevo </button>
                         <ListGroup as="ol" className="m-2">
                             {
-                                user.map((dato) =>
+                                list_users.map((dato) =>
                                     <ListGroup.Item key={dato.id} as="li"
                                         className=" justify-content-between align-items-start">
                                         <Row>

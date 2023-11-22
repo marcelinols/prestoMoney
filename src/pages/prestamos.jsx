@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
+import { Badge, Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
 import Navbars from "../components/navbar";
 import { format, stringAvatar, suma } from '../utils/funtions'
 import { Avatar } from '@mui/material';
@@ -9,88 +9,89 @@ import Alert from '@mui/material/Alert';
 
 import '../asset/style/inversiones.css'
 import { app } from '../firebase';
-import { collection, getDocs, addDoc, getFirestore } from 'firebase/firestore';
+import { collection, addDoc, getFirestore } from 'firebase/firestore';
 
 //hook
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addLoan } from '../hook/actions';
 
 export default function Prestamos() {
 
     const list_users = useSelector((state) => state.users);
+    const list_loans = useSelector((state) => state.prestamos);
+    const total_investment = suma(useSelector((state) => state.inversiones));
 
     const [loan, setLoan] = React.useState(0.0);
-    const [show, setShow] = React.useState(false);
-    const [loans, setLoans] = React.useState([]);
-    const [usuarios, setUsuarios] = React.useState(list_users);
+    const [show, setShow] = React.useState(false); 
+    const [showdetail, setShowdetail] = React.useState(false); 
     const [error, setError] = React.useState(false)
     const [msgError, setMsgError] = React.useState('');
 
     const [idUser, setIdUser] = React.useState('');
     const [user, setUser] = React.useState('');
-    const [amount, setAmount] = React.useState(0.0);
-    const [porcent, setPorcent] = React.useState(5);
-    const [time, setTime] = React.useState(1);
-
+    const [amount, setAmount] = React.useState(0.0); 
+    const [interes, setInteres] = React.useState(0);
+    const [datePay, setDatePay] = React.useState();
+    const [total, setTotal] = React.useState(0);
 
     const db = getFirestore(app);
+    const dispatch = useDispatch();
 
-    const all_user = async () => {
-
-        if (Object.keys(usuarios).length <= 0) {
-            await getDocs(collection(db, "users"))
-                .then((querySnapshot) => {
-                    const newDatas = querySnapshot.docs.map(
-                        (doc) => (
-                            { ...doc.data(), id: doc.id }
-                        ));
-                    setUsuarios(newDatas);
-                });
-        }
-    }
-
-    const all_loans = async () => {
-
-        await getDocs(collection(db, "prestamos"))
-            .then((querySnapshot) => {
-                const data = querySnapshot.docs.map(
-                    (doc) => (
-                        { ...doc.data(), id: doc.id }
-                    ));
-                setLoans(data);
-                setLoan(suma(data));
-            });
+    const all_loans = () => {
+        setLoan(suma(list_loans)); 
     }
 
     const clean = () => {
-        setIdUser()
-        setUser('')
+        setIdUser("0")
+        setUser("")
         setAmount(0)
-        setPorcent(5)
-        setTime(1)
+        setTotal(0);
+        setDatePay()
     }
 
     const add_loan = async (e) => {
         e.preventDefault();
-        if (idUser == '') {
+        if (user == "" || idUser == "0") {
             setError(true);
             setMsgError('Seleccione una Persona')
         } else if (parseFloat(amount) <= 0) {
             setError(true);
             setMsgError('El monto debe ser mayor a 0')
+        } else if (parseFloat(total_investment) < parseFloat(amount)) {
+            setError(true);
+            setMsgError('El monto supera el saldo de prestamo, solo: $ ' + total_investment.toFixed(2))
         } else {
-            try {
-                const docRef = await addDoc(collection(db, "prestamos"), {
+            try { 
+                const fecha = new Date();
+                const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
+
+                const data = {
                     amount: parseFloat(amount),
                     available: true,
-                    created_at: new Date(),
-                    porcent: parseInt(porcent),
-                    status: true,
-                    time: parseInt(time),
-                    uid: /users/ + idUser,
+                    created_at: today,
+                    date_pay: datePay,
+                    interes: 0,
+                    status: false,
+                    uid: idUser,
                     user: {
                         username: user
                     }
-                });
+                }
+
+                const docRef = await addDoc(collection(db, "prestamos"), data);
+                dispatch(addLoan({
+                    id: docRef.id,
+                    amount: parseFloat(amount),
+                    available: true,
+                    created_at: today,
+                    date_pay: datePay,
+                    interes: 0,
+                    status: false,
+                    uid: idUser,
+                    user: {
+                        username: user
+                    }
+                }));
                 clean();
                 all_loans();
                 setShow(false);
@@ -101,11 +102,58 @@ export default function Prestamos() {
         }
     }
 
-    React.useEffect(() => {
-        all_loans();
-        all_user();
-    }, [])
+    const calcInteres = (datesPay, amounts) => {
 
+        const fecha = new Date();
+        const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
+
+        var date1 = new Date(datesPay);
+        var date2 = new Date(today);
+
+        // To calculate the time difference of two dates 
+        var Difference_In_Time = date1.getTime() - date2.getTime();
+
+        // To calculate the no. of days between two dates 
+        var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+        console.log(Difference_In_Days, "days");
+        if (Difference_In_Days > 0) {
+            const intereses = ((12 * 8) / 365) * parseInt(Difference_In_Days);
+            const tot = amounts * (parseFloat(intereses).toFixed(2) / 100);
+            setInteres(tot)
+            setTotal(parseFloat(tot) + parseFloat(amounts))
+            setError(false)
+        } else {
+            setInteres(0)
+            setTotal(0)
+            setError(true)
+            setMsgError("Fecha Invalida!, verifiquela")
+        }
+    }
+
+    const value_interes = (datesPay, amounts) => {
+
+        const fecha = new Date();
+        const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
+        console.log(datesPay, "dates");
+        var date1 = new Date(datesPay);
+        var date2 = new Date(today);
+
+        // To calculate the time difference of two dates 
+        var Difference_In_Time = date2.getTime() - date1.getTime();
+
+        // To calculate the no. of days between two dates 
+        var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+        console.log(Difference_In_Days, "days1");
+        const intereses = ((12 * 8) / 365) * parseInt(Difference_In_Days);
+        const tot = amounts * (parseFloat(intereses).toFixed(2) / 100);
+        return Number.parseFloat(tot).toFixed(2);
+    }
+
+
+    React.useEffect(() => {
+        all_loans(); 
+    }, [list_loans])
 
     return (
         <>
@@ -124,10 +172,10 @@ export default function Prestamos() {
                     <div className='history'>
                         <ListGroup as="ol" className="m-2">
                             {
-                                loans.map((dato) =>
+                                list_loans.map((dato) =>
 
                                     <ListGroup.Item key={dato.id} as="li"
-                                        className=" justify-content-between align-items-start">
+                                        className="justify-content-between align-items-start">
 
                                         <Row>
                                             <Col xs={2} md={2} >
@@ -135,14 +183,15 @@ export default function Prestamos() {
                                             </Col>
                                             <Col xs={6} md={7}>
                                                 <div className="fw-bold">{dato.user.username}</div>
-                                                {new Date(dato.created_at.seconds * 1000).toLocaleDateString("es-MX")}
+                                                {dato.created_at}
                                             </Col>
                                             <Col xs={4} md={3}>
-                                                <p bg="light" text="dark" > {format(dato.amount)} </p>
+                                                <p bg="light" text="dark" >{format(dato.amount)} <Badge bg="danger">$ {value_interes(dato.created_at, dato.amount)}</Badge> </p>
                                             </Col>
                                         </Row>
                                     </ListGroup.Item>
-                                )}
+                                )
+                            }
                         </ListGroup>
                     </div>
                 </div>
@@ -162,49 +211,59 @@ export default function Prestamos() {
                         <Form.Select id="users" onChange={e => { setIdUser(e.target.value); setUser(e.target.options[e.target.selectedIndex].text) }}>
                             <option value={0}>Seleccionar...</option>
                             {
-                                usuarios.map((dt) =>
+                                list_users.map((dt) =>
                                     <option key={dt.id} value={dt.id}>{dt.username}</option>
                                 )
                             }
                         </Form.Select>
-                        <Row>
+                        <Row> 
                             <Col sm={6}>
-                                <Form.Label htmlFor="porcent" className='label'>Porcentaje</Form.Label>
+                                <Form.Label className='label' htmlFor="amount">Monto</Form.Label>
                                 <Form.Control
+                                    className='text-center'
+                                    size="lg"
+                                    placeholder='Monto'
+                                    step={0.01}
                                     type="number"
-                                    id="porcent"
-                                    aria-describedby="porcentaje"
-                                    value={porcent}
-                                    onChange={e => setPorcent(e.target.value)}
-                                    max={100}
-                                    min={0}
+                                    id="amount"
+                                    min={1}
+                                    aria-describedby="Monto"
+                                    value={amount}
+                                    onChange={e => { setAmount(e.target.value); calcInteres(datePay, e.target.value) }}
                                 />
                             </Col>
                             <Col sm={6}>
-                                <Form.Label className='label' htmlFor="porcent">Periodo</Form.Label>
-                                <Form.Select onChange={e => setTime(e.target.value)}>
-                                    <option value={1}>Semanal</option>
-                                    <option value={2}>Quincenal</option>
-                                    <option value={3}>Mensual</option>
-                                </Form.Select>
+                                <Form.Label className='label' htmlFor="fecha pago">Fecha de Pago</Form.Label>
+                                <Form.Control size="lg" type='date' onChange={e => { setDatePay(e.target.value); calcInteres(e.target.value, amount) }} />
                             </Col>
                         </Row>
-                        <div className='text-center'>
-                            <Form.Label className='label' htmlFor="amount">Monto</Form.Label>
-                            <Form.Control
-                                className='text-center'
-                                size="lg"
-                                placeholder='Monto'
-                                step={0.01}
-                                type="number"
-                                id="amount"
-                                min={1}
-                                aria-describedby="Monto"
-                                value={amount}
-                                onChange={e => setAmount(e.target.value)}
-                            />
-
-                        </div>
+                        <Row>
+                            <Col sm={6}>
+                                <Form.Label htmlFor="tax" className='label text-danger'>Total Interes Generado</Form.Label>
+                                <Form.Control
+                                    disabled
+                                    className='text-center text-danger'
+                                    size="lg"
+                                    step={0.01}
+                                    type="text"
+                                    id="tax"
+                                    aria-describedby="Interes"
+                                    value={format(interes)}
+                                />
+                            </Col>
+                            <Col sm={6}>
+                                <Form.Label htmlFor="tax" className='label text-success '>Total a Pagar</Form.Label>
+                                <Form.Control
+                                    disabled
+                                    className='text-center text-success'
+                                    size="lg"
+                                    step={0.01}
+                                    type="text"
+                                    aria-describedby="Interes"
+                                    value={format(total)}
+                                />
+                            </Col>
+                        </Row> 
                         {
                             error && <Alert severity="error" className='mt-2' onClose={() => { setError(false) }}>{msgError}</Alert>
                         }
@@ -213,7 +272,7 @@ export default function Prestamos() {
                         <button size='sm' className='btn-default' onClick={() => { setShow(false) }}>
                             Cerrar
                         </button>
-                        <button type='submit' className='btn-new' size='sm'>Crear</button>
+                        <button type='submit' className='btn-new' size='sm'>Solicitar</button>
                     </Modal.Footer>
                 </Form>
             </Modal>
