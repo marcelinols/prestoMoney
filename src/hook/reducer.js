@@ -3,6 +3,8 @@ const initialState = {
     inversiones: [],
     prestamos: [],
     admin: 0,
+    uid: "",
+    id_user: "",
 }
 
 const reducers = (state = initialState, action) => {
@@ -10,7 +12,7 @@ const reducers = (state = initialState, action) => {
         case 'all_users':
             return { ...state, users: action.payload }
         case 'add_user':
-            return { ...state, users: { ...state.users, ...action.payload } }
+            return { ...state, users: [...state.users, action.payload] }
         case 'add_investment':
             return { ...state, inversiones: [...state.inversiones, action.payload] }
         case 'all_investment':
@@ -20,7 +22,12 @@ const reducers = (state = initialState, action) => {
         case 'all_loans':
             return { ...state, prestamos: action.payload }
         case 'admin':
-            return { ...state, admin: 1 }
+            return { ...state, admin: action.payload }
+        case 'uid':
+            return { ...state, uid: action.payload }
+        case 'id_user':
+            return { ...state, id_user: action.payload }
+
         default:
             return state;
     }

@@ -5,8 +5,10 @@ import { Col, Container, Form, ListGroup, Modal, Row } from 'react-bootstrap';
 import { Avatar } from '@mui/material';
 import { stringAvatar } from '../utils/funtions'
 import { app } from '../firebase'
-import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase';
 import { addUser } from '../hook/actions';
 
 export default function Users() {
@@ -17,7 +19,10 @@ export default function Users() {
     const [nombre, setNombre] = React.useState("");
     const [apellido, setApellido] = React.useState("");
     const [correo, setCorreo] = React.useState("");
+    const [password, setPassword] = React.useState("");
     const [telefono, setTelefono] = React.useState("");
+    const [uid, setUid] = React.useState("");
+
 
     const db = getFirestore(app);
     const dispatch = useDispatch();
@@ -25,18 +30,21 @@ export default function Users() {
     const handleUser = async (e) => {
         e.preventDefault();
         try {
-            const data = {
-                username: nombre + " " + apellido,
-                email: correo,
-                phone: telefono,
-                status: true,
-                avatar: "null",
-                uid: "-"
-            };
 
-            const docRef = await addDoc(collection(db, "users"), data);
-            console.log("Document written with ID: ", docRef.id);
-            dispatch(addUser(data))
+            let users = "";
+            createUserWithEmailAndPassword(auth, correo, password)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    add_user(user.uid);
+                    // ...
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // ..
+                });
+
             setShow(false);
             setNombre("")
             setApellido("")
@@ -47,7 +55,34 @@ export default function Users() {
         }
     }
 
+    async function add_user(id_user) {
+        const data = {
+            username: nombre + " " + apellido,
+            email: correo,
+            phone: telefono,
+            status: true,
+            avatar: "null",
+            uid: id_user
+        };
 
+        const docRef = await addDoc(collection(db, "users"), data);
+        console.log("Document written with ID: ", docRef.id);
+        dispatch(addUser(
+            {
+                username: nombre + " " + apellido,
+                email: correo,
+                phone: telefono,
+                status: true,
+                avatar: "null",
+                uid: id_user,
+                id: docRef.id
+            }
+        ))
+    }
+
+    React.useEffect(() => {
+        console.log(list_users);
+    }, [list_users])
 
     return (
         <>
@@ -99,12 +134,16 @@ export default function Users() {
                             <Form.Control value={apellido} required type="text" placeholder="Apellidos" onChange={e => setApellido(e.target.value)} />
                         </Form.Group>
                         <Form.Group>
+                            <Form.Label className='label'>Telefono</Form.Label>
+                            <Form.Control value={telefono} maxLength={10} type="text" onKeyDown={e => /[\+\-\.\,]$/.test(e.key) && e.preventDefault()} pattern="[0-9]*" placeholder="Telefono" onChange={e => setTelefono(e.target.value)} />
+                        </Form.Group>
+                        <Form.Group>
                             <Form.Label className='label'>Correo</Form.Label>
                             <Form.Control value={correo} required type="email" placeholder="Correo" onChange={e => setCorreo(e.target.value)} />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label className='label'>Telefono</Form.Label>
-                            <Form.Control value={telefono} maxLength={10} type="text" onKeyDown={e => /[\+\-\.\,]$/.test(e.key) && e.preventDefault()} pattern="[0-9]*" placeholder="Telefono" onChange={e => setTelefono(e.target.value)} />
+                            <Form.Label className='label'>Contraseña</Form.Label>
+                            <Form.Control value={password} required type="password" placeholder="Contraseña" onChange={e => setPassword(e.target.value)} />
                         </Form.Group>
                     </Modal.Body>
                     <Modal.Footer>

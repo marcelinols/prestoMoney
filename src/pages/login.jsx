@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Form, Alert, Container, Image } from 'react-bootstrap';
 import '../asset/style/login.css';
-import logo from '../asset/images/prestoMoney.png'
+import logo from '../asset/images/prestoMoney.jpeg'
+import { useDispatch } from 'react-redux';
 
 
 export default function Login() {
@@ -16,7 +17,10 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState(""); 
     const navigate = useNavigate();
-    const { currentUser } = useAuth();
+
+    const { currentUser } = useAuth(); 
+
+    const dispatch = useDispatch();
 
     const handdleLogin = (e) => {
         e.preventDefault();
@@ -25,8 +29,9 @@ export default function Login() {
         setLoading(true);
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                const user = userCredential.user; 
-                console.log(user);
+                const user = userCredential.user;   
+                console.log(user)
+                dispatch({ type: 'id_user', payload: user.uid })
                 navigate('/')
             }).catch((error) => {
                 setError(error.code + ' ' + error.message);

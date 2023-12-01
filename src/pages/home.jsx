@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
 import { Col, Row, Container, Tab, Tabs, ListGroup } from 'react-bootstrap';
 import { MoneyOff, PriceChange } from '@mui/icons-material';
 import { Avatar } from "@mui/material";
@@ -16,9 +15,6 @@ export default function Home() {
 
     const [investment, setInvestment] = React.useState(0.0); 
     const [loan, setLoan] = React.useState(0.0); 
-
-    const { currentUser, logout } = useAuth();
-
 
     const fetchPost = async () => {
 
@@ -38,10 +34,6 @@ export default function Home() {
             console.log(doc.id, ' => ', doc.data());
         });*/
 
-    }
-
-    const logOut = () => {
-        logout();
     }
 
     useEffect(() => {
@@ -92,7 +84,7 @@ export default function Home() {
                                                     </Col>
                                                     <Col xs={6} md={7}>
                                                         <div className="fw-bold">{dato.user.username}</div>
-                                                        {new Date(dato.created_at.seconds * 1000).toLocaleDateString("es-MX")}
+                                                        {dato.created_at}
                                                     </Col>
                                                     <Col xs={4} md={3}>
                                                         <p bg="light" text="dark" > {format(dato.amount)} </p>
@@ -114,7 +106,8 @@ export default function Home() {
                                                     </Col>
                                                     <Col xs={6} md={7}>
                                                         <div className="fw-bold">{dato.user.username}</div>
-                                                        {new Date(dato.created_at.seconds * 1000).toLocaleDateString("es-MX")}
+                                                        {
+                                                            dato.created_at}
                                                     </Col>
                                                     <Col xs={4} md={3}>
                                                         <p bg="light" text="dark" > {format(dato.amount)} </p>
