@@ -1,6 +1,7 @@
 import React from 'react'
 import Home from './pages/home';
 import Login from './pages/login';
+import Register from './pages/register';
 import Prestamos from './pages/prestamos';
 import Inversiones from './pages/inversiones';
 import Users from './pages/users';
@@ -19,32 +20,31 @@ function App() {
   let uid = useSelector(status => status.uid);
   let admin = useSelector(status => status.admin);
 
-  console.log("1, addd", admin);
-
   const dispatch = useDispatch();
   const db = getFirestore(app); 
 
   const all_datas = async () => {
 
-    if (currentUser.email === "admin@prestomoney.com") {
+    if (currentUser.email === "admin@arka.com") {
       admin = 1;
       dispatch({ type: 'admin', payload: 1 })
-      console.log("1, entraa", currentUser);
+
     } else {
       if (currentUser.uid != undefined) {
-
         const userRef = collection(db, "users");
-        const datos = query(userRef, where("uid", "==", currentUser.uid));
+        const datos = query(userRef, where("uid", "==", "" + currentUser.uid + ""));
 
-        await getDocs(datos)
-          .then((querySnapshot) => {
-            const data = querySnapshot.docs.map(
-              (doc) => (
-                { ...doc.data(), id: doc.id }
-              ));
-            uid = data[0].id
-            dispatch({ type: 'uid', payload: data[0].id })
-          });
+        if (uid === "") { 
+          await getDocs(datos)
+            .then((querySnapshot) => {
+              const data = querySnapshot.docs.map(
+                (doc) => (
+                  { ...doc.data(), id: doc.id }
+                ));
+              uid = data[0].id
+              dispatch({ type: 'uid', payload: data[0].id })
+            });
+        }
       }
     }
 
@@ -114,6 +114,7 @@ function App() {
               </PrivateRoute>
             } />
             <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
             <Route path="/prestamos" element={
               <PrivateRoute>
                 <Prestamos />

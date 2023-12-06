@@ -43,7 +43,7 @@ function Navbars() {
                                         (admin === 1) && <Link to="/usuarios">Usuarios</Link>
                                     }
 
-                                    <Link to="/inversiones">Inversiones</Link>
+                                    <Link to="/inversiones">Ahorro</Link>
                                     <Link to="/prestamos">Prestamos</Link>
                                     <NavDropdown title="Perfil" id={`offcanvasNavbarDropdown-expand-md`} >
                                         <NavDropdown.Item href="#action3">Action</NavDropdown.Item>

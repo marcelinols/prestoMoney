@@ -56,7 +56,7 @@ export default function Home() {
                                     <PriceChange fontSize="large" style={{ color: '#22e07d' }} className="mb-1" />
                                     <br></br>
                                     {format(investment)}
-                                    <p className="mt-1" style={{ color: '#adb5bd' }}>Inversión</p>
+                                    <p className="mt-1" style={{ color: '#adb5bd' }}>Ahorro</p>
                                 </div>
                             </Col>
                             <Col>
@@ -72,7 +72,7 @@ export default function Home() {
                     </div>
                     <div className="resume">
                         <Tabs defaultActiveKey="inversiones">
-                            <Tab eventKey="inversiones" title="Inversiones">
+                            <Tab eventKey="inversiones" title="Ahorros">
                                 <ListGroup as="ol" className="m-2">
                                     {
                                         all_investment.map((dato) =>

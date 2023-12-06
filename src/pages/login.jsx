@@ -40,6 +40,7 @@ export default function Login() {
     }
 
     useEffect(() => {
+        console.log(currentUser);
         if (currentUser) {
             navigate("/")
         } 
@@ -70,6 +71,7 @@ export default function Login() {
                         <button className='btn-login' type="submit" >
                             Iniciar
                         </button>
+                        <small className='text-center'>Registrarse <a href="register"><b>Aqui</b></a></small>
                     </div>
                     <br></br>
                     {error && <Alert key="danger" variant="danger">Error en la contraseña o correo</Alert>}

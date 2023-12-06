@@ -7,19 +7,18 @@ import { stringAvatar } from '../utils/funtions'
 import { app } from '../firebase'
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../firebase';
 import { addUser } from '../hook/actions';
+import { useAuth } from '../context/AuthContext';
 
 export default function Users() {
 
     const list_users = useSelector(status => status.users)
+    const { currentUser } = useAuth(); 
 
     const [show, setShow] = React.useState(false); 
     const [nombre, setNombre] = React.useState("");
     const [apellido, setApellido] = React.useState("");
-    const [correo, setCorreo] = React.useState("");
-    const [password, setPassword] = React.useState("");
+    const [correo, setCorreo] = React.useState(""); 
     const [telefono, setTelefono] = React.useState("");
     const [uid, setUid] = React.useState("");
 
@@ -31,19 +30,20 @@ export default function Users() {
         e.preventDefault();
         try {
 
-            let users = "";
-            createUserWithEmailAndPassword(auth, correo, password)
+            add_user("");
+
+            /*createUserWithEmailAndPassword(auth_add, correo, password)
                 .then((userCredential) => {
                     // Signed up 
                     const user = userCredential.user;
-                    add_user(user.uid);
-                    // ...
+                    
+
                 })
                 .catch((error) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     // ..
-                });
+                }); */
 
             setShow(false);
             setNombre("")
@@ -140,11 +140,7 @@ export default function Users() {
                         <Form.Group>
                             <Form.Label className='label'>Correo</Form.Label>
                             <Form.Control value={correo} required type="email" placeholder="Correo" onChange={e => setCorreo(e.target.value)} />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label className='label'>Contraseña</Form.Label>
-                            <Form.Control value={password} required type="password" placeholder="Contraseña" onChange={e => setPassword(e.target.value)} />
-                        </Form.Group>
+                        </Form.Group> 
                     </Modal.Body>
                     <Modal.Footer>
                         <button size='sm' className='btn-default' onClick={() => { setShow(false) }}>

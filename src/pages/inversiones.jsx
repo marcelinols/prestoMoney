@@ -102,7 +102,7 @@ export default function Inversiones() {
             <Container className="d-flex align-items-center justify-content-center">
                 <div className="w-100 screen">
                     <div className="card-total text-center p-3">
-                        <h6 className="fw-bolder in" style={{ color: '#b2c3eb' }}>Monto Invertido</h6>
+                        <h6 className="fw-bolder in" style={{ color: '#b2c3eb' }}>Monto Ahorrado</h6>
                         <h1 className="text-center m-3">{format(inversion)}</h1>
 
                         <Fab className='btn-add' variant="extended" color="primary" aria-label="add" onClick={() => { setShow(true); }}>
@@ -143,7 +143,7 @@ export default function Inversiones() {
                 keyboard={false}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title >Agregar Inversion</Modal.Title>
+                    <Modal.Title >Agregar Ahorro</Modal.Title>
                 </Modal.Header>
                 <Form onSubmit={add_inversion}>
                     <Modal.Body className='text-center'>
