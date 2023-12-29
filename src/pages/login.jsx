@@ -32,7 +32,8 @@ export default function Login() {
                 const user = userCredential.user;   
                 console.log(user)
                 dispatch({ type: 'id_user', payload: user.uid })
-                navigate('/')
+                //navigate('/')
+                window.location.href = "/"
             }).catch((error) => {
                 setError(error.code + ' ' + error.message);
             });

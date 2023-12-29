@@ -12,6 +12,8 @@ import { app } from './firebase';
 import { allInvestment, allLoans, allUsers } from './hook/actions';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
 import { useAuth } from './context/AuthContext';
+import { suma } from './utils/funtions';
+import Detail from './pages/detail';
 
 function App() {
 
@@ -25,16 +27,43 @@ function App() {
 
   const all_datas = async () => {
 
+    let tt_dispose = 0;
+
     if (currentUser.email === "admin@arka.com") {
       admin = 1;
       dispatch({ type: 'admin', payload: 1 })
 
+      const data_all_inv = query(collection(db, "inversiones"), where("status", "==", true), orderBy("created_at", "desc"));
+      await getDocs(data_all_inv)
+        .then((querySnapshot) => {
+          const datas = querySnapshot.docs.map(
+            (doc) => (
+              { ...doc.data(), id: doc.id }
+            ));
+          dispatch(allInvestment(datas))
+          tt_dispose += suma(datas)
+        });
+
+      const data_all_pre = query(collection(db, "prestamos"), orderBy("created_at", "desc"));
+      await getDocs(data_all_pre)
+        .then((querySnapshot) => {
+          const datas = querySnapshot.docs.map(
+            (doc) => (
+              { ...doc.data(), id: doc.id }
+            ));
+          tt_dispose -= suma(datas)
+          dispatch(allLoans(datas))
+        });
+
+      dispatch({ type: "tt_investment", payload: tt_dispose })
+
     } else {
+
       if (currentUser.uid != undefined) {
         const userRef = collection(db, "users");
         const datos = query(userRef, where("uid", "==", "" + currentUser.uid + ""));
 
-        if (uid === "") { 
+        if (uid === "") {
           await getDocs(datos)
             .then((querySnapshot) => {
               const data = querySnapshot.docs.map(
@@ -43,56 +72,50 @@ function App() {
                 ));
               uid = data[0].id
               dispatch({ type: 'uid', payload: data[0].id })
+              dispatch(allUsers(data))
             });
+
+
+          const inverRef = collection(db, "inversiones");
+          const dataInv = query(inverRef, where("uid", "==", uid), where("status", "==", true), orderBy("created_at", "desc"));
+
+          await getDocs(dataInv)
+            .then((querySnapshot) => {
+              const data = querySnapshot.docs.map(
+                (doc) => (
+                  { ...doc.data(), id: doc.id }
+                ));
+              dispatch(allInvestment(data))
+              tt_dispose = suma(data);
+            });
+
+          const presRef = collection(db, "prestamos");
+          const dataPre = query(presRef, where("uid", "==", uid), where("status", "==", true), orderBy("created_at", "desc"));
+
+          await getDocs(dataPre)
+            .then((querySnapshot) => {
+              const datas = querySnapshot.docs.map(
+                (doc) => (
+                  { ...doc.data(), id: doc.id }
+                ));
+              dispatch(allLoans(datas))
+            });
+
+          dispatch({ type: "tt_investment", payload: tt_dispose * 1.3 })
         }
+
       }
     }
-
-
-    let dataInv = {};
-    if (admin === 1) {
-      dataInv = query(collection(db, "inversiones"), orderBy("created_at", "desc"));
-    } else {
-      const inverRef = collection(db, "inversiones");
-      dataInv = query(inverRef, where("uid", "==", uid), orderBy("created_at", "desc"));
-
-    } 
-    await getDocs(dataInv)
-      .then((querySnapshot) => {
-        const data = querySnapshot.docs.map(
-          (doc) => (
-            { ...doc.data(), id: doc.id }
-          ));
-        dispatch(allInvestment(data))
-      });
-
-    let dataPre = [];
-    if (admin === 1) {
-      dataPre = dataPre = query(collection(db, "prestamos"), orderBy("created_at", "desc"));
-    } else {
-      const presRef = collection(db, "prestamos");
-      dataPre = dataPre = query(presRef, where("uid", "==", uid), orderBy("created_at", "desc"));
-    }
-
-    await getDocs(dataPre)
-      .then((querySnapshot) => {
-        const datas = querySnapshot.docs.map(
-          (doc) => (
-            { ...doc.data(), id: doc.id }
-          ));
-        dispatch(allLoans(datas))
-      });
-
 
 
     if (admin === 1) {
       await getDocs(collection(db, "users"))
         .then((querySnapshot) => {
-          const datas = querySnapshot.docs.map(
+          const datas_user = querySnapshot.docs.map(
             (doc) => (
               { ...doc.data(), id: doc.id }
             ));
-          dispatch(allUsers(datas))
+          dispatch(allUsers(datas_user))
         });
     }
 
@@ -120,6 +143,11 @@ function App() {
                 <Prestamos />
               </PrivateRoute>
             } />
+      <Route path="/detail" element={
+        <PrivateRoute>
+          <Detail />
+        </PrivateRoute>
+      } />
             <Route path="/inversiones" element={
               <PrivateRoute>
                 <Inversiones />

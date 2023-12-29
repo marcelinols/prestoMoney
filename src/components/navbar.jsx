@@ -13,8 +13,6 @@ function Navbars() {
     const { logout, currentUser } = useAuth();
     const admin = useSelector(status => status.admin);
 
-    console.log("admin", admin);
-
     const handleClose = () => {
         logout();
     }

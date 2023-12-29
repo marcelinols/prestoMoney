@@ -5,6 +5,7 @@ const initialState = {
     admin: 0,
     uid: "",
     id_user: "",
+    tt_investment: 0
 }
 
 const reducers = (state = initialState, action) => {
@@ -17,6 +18,8 @@ const reducers = (state = initialState, action) => {
             return { ...state, inversiones: [...state.inversiones, action.payload] }
         case 'all_investment':
             return { ...state, inversiones: action.payload }
+        case 'tt_investment':
+            return { ...state, tt_investment: action.payload }
         case 'add_loan':
             return { ...state, prestamos: [...state.prestamos, action.payload] }
         case 'all_loans':

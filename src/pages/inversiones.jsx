@@ -19,6 +19,7 @@ export default function Inversiones() {
 
     const list_users = useSelector((state) => state.users);
     const list_investment = useSelector((state) => state.inversiones);
+    const tt_available = useSelector((state) => state.tt_investment);
 
     const [inversion, setInversion] = React.useState(0.0);
     const [show, setShow] = React.useState(false); 
@@ -34,7 +35,6 @@ export default function Inversiones() {
 
     const all_inversiones = () => {
         setInversion(suma(list_investment));
-        console.log(list_investment);
     }
 
     const clean = () => {
@@ -45,7 +45,7 @@ export default function Inversiones() {
 
     const add_inversion = async (e) => {
         e.preventDefault();
-        if (idUser == '') {
+        if (idUser === '') {
             setError(true);
             setMsgError('Seleccione una Persona')
         } else if (parseFloat(amount) <= 0) {
@@ -82,6 +82,9 @@ export default function Inversiones() {
                     }
                 }));
                 clean();
+                const nvo_inv = parseFloat(tt_available) + parseFloat(amount);
+                dispatch({ type: "tt_investment", payload: nvo_inv })
+
                 all_inversiones();
                 setShow(false);
                 console.log("Document written with ID: ", docRef.id);
@@ -93,7 +96,7 @@ export default function Inversiones() {
 
     React.useEffect(() => {
         all_inversiones(); 
-    }, [list_investment])
+    }, [list_investment, tt_available])
 
 
     return (

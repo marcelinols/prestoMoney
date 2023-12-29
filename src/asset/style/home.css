@@ -15,6 +15,13 @@
     min-height: 120px; 
 }
 
+.label-datils { 
+    color: var(--blanco);
+    font-family: 'Quicksand', sans-serif;
+    min-height: 12px; 
+}
+
+
 .card-mount {
     color: var(--azul); 
     background-color: var(--blanco);

@@ -12,6 +12,7 @@ export default function Home() {
 
     const all_investment = useSelector(status => status.inversiones)
     const all_loans = useSelector(status => status.prestamos)
+    const tt_available = useSelector(status => status.tt_investment)
 
     const [investment, setInvestment] = React.useState(0.0); 
     const [loan, setLoan] = React.useState(0.0); 
@@ -49,7 +50,7 @@ export default function Home() {
                 <div className="w-100 screen">
                     <div className="card-total text-center p-4">
                         <h6 className="fw-bolder in" style={{ color: '#b2c3eb' }}>Monto disponible</h6>
-                        <h1 className="text-center m-4">{format(investment - loan)}</h1>
+                        <h1 className="text-center m-4">{format(tt_available)}</h1>
                         <Row className="text-center ">
                             <Col>
                                 <div className="card-mount">
@@ -110,7 +111,9 @@ export default function Home() {
                                                             dato.created_at}
                                                     </Col>
                                                     <Col xs={4} md={3}>
-                                                        <p bg="light" text="dark" > {format(dato.amount)} </p>
+                                                        {
+                                                            (dato.status === false) ? <p bg="light" text="dark" >-</p> : <p bg="light" text="dark" > {format(dato.amount)} </p>
+                                                        }
                                                     </Col>
                                                 </Row>
                                             </ListGroup.Item>
