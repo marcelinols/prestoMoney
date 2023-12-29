@@ -6,6 +6,8 @@ import { Avatar } from '@mui/material';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import Alert from '@mui/material/Alert';
+import { Link } from 'react-router-dom';
+
 
 import '../asset/style/inversiones.css'
 import { app } from '../firebase';
@@ -18,12 +20,11 @@ import { addLoan } from '../hook/actions';
 export default function Prestamos() {
 
     const list_users = useSelector((state) => state.users);
-    const list_loans = useSelector((state) => state.prestamos);
-    const total_investment = suma(useSelector((state) => state.inversiones));
+    const list_loans = useSelector((state) => state.prestamos);  
+    const tt_available = useSelector((state) => state.tt_investment);
 
     const [loan, setLoan] = React.useState(0.0);
-    const [show, setShow] = React.useState(false); 
-    const [showdetail, setShowdetail] = React.useState(false); 
+    const [show, setShow] = React.useState(false);  
     const [error, setError] = React.useState(false)
     const [msgError, setMsgError] = React.useState('');
 
@@ -35,10 +36,10 @@ export default function Prestamos() {
     const [total, setTotal] = React.useState(0);
 
     const db = getFirestore(app);
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); 
 
     const all_loans = () => {
-        setLoan(suma(list_loans)); 
+        setLoan(suma(list_loans));  
     }
 
     const clean = () => {
@@ -51,15 +52,15 @@ export default function Prestamos() {
 
     const add_loan = async (e) => {
         e.preventDefault();
-        if (user == "" || idUser == "0") {
+        if (user === "" || idUser === "0") {
             setError(true);
             setMsgError('Seleccione una Persona')
         } else if (parseFloat(amount) <= 0) {
             setError(true);
             setMsgError('El monto debe ser mayor a 0')
-        } else if (parseFloat(total_investment) < parseFloat(amount)) {
+        } else if (parseFloat(tt_available) < parseFloat(amount)) {
             setError(true);
-            setMsgError('El monto supera el saldo de prestamo, solo: $ ' + total_investment.toFixed(2))
+            setMsgError('El monto supera el saldo  disponible de prestamo, solo: $ ' + tt_available.toFixed(2))
         } else {
             try { 
                 const fecha = new Date();
@@ -92,6 +93,10 @@ export default function Prestamos() {
                         username: user
                     }
                 }));
+
+                const nvo_inv = parseFloat(tt_available) - parseFloat(amount);
+                dispatch({ type: "tt_investment", payload: nvo_inv })
+
                 clean();
                 all_loans();
                 setShow(false);
@@ -150,9 +155,10 @@ export default function Prestamos() {
     }
 
 
+
     React.useEffect(() => {
-        all_loans(); 
-    }, [list_loans])
+        all_loans();
+    }, [list_loans, tt_available])
 
     return (
         <>
@@ -175,17 +181,20 @@ export default function Prestamos() {
 
                                     <ListGroup.Item key={dato.id} as="li"
                                         className="justify-content-between align-items-start">
-
-                                        <Row>
+                                        <Row >
                                             <Col xs={2} md={2} >
                                                 <Avatar alt={dato.user.username}  {...stringAvatar(dato.user.username)} />
                                             </Col>
                                             <Col xs={6} md={7}>
+                                                <Link className='links' to={"/detail?id=" + dato.id}> 
                                                 <div className="fw-bold">{dato.user.username}</div>
                                                 {dato.created_at}
+                                                </Link>
                                             </Col>
                                             <Col xs={4} md={3}>
-                                                <p bg="light" text="dark" >{format(dato.amount)} <Badge bg="danger">$ {value_interes(dato.created_at, dato.amount)}</Badge> </p>
+                                                {
+                                                    (dato.status === false) ? <p bg="light" text="dark" >...</p> : <p bg="light" text="dark" >{format(dato.amount)}  {(dato.available) && <Badge bg="danger">$ {value_interes(dato.created_at, dato.amount)}</Badge>} </p>
+                                                }
                                             </Col>
                                         </Row>
                                     </ListGroup.Item>

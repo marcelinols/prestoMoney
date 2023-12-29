@@ -11,3 +11,27 @@
     position: relative;
     top: 40px; 
 }
+
+.links{
+    text-decoration: none;
+    padding: 0px;
+    color: var(--azul);
+}
+
+.btn-load{
+    color: var(--blanco);
+    background-color: var(--verde);
+    border-color: var(--verde);
+    border-radius: 25px;
+    border: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.btn-load:hover{
+    text-decoration: none; 
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
+}
+ 

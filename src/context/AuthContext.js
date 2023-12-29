@@ -10,10 +10,8 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
 
-    const [currentUser, setCurrentUser] = React.useState({});
-    const [admin, setAdmin] = React.useState(1);
-    const [username, setUsername] = React.useState('')
-    const [email, setEmail] = React.useState('')
+    const [currentUser, setCurrentUser] = React.useState({}); 
+    const [username, setUsername] = React.useState('') 
     const [avatar, setAvatar] = React.useState('')
 
     function logout() {
@@ -22,14 +20,14 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user) 
+            setCurrentUser(user)
         })
         return unsubscribe 
     }, []) 
 
     return (
         <AuthContext.Provider value={{
-            currentUser, logout, admin, username, avatar, email
+            currentUser, logout, username, avatar
         }}>
             {children}
         </AuthContext.Provider>

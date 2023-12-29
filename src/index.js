@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { AuthProvider } from './context/AuthContext';
+
 import App from './App'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './asset/style/App.css';
@@ -16,7 +18,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <Provider store={store}>
-    <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </Provider>
   </BrowserRouter>
 ); 

@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.db6cf5b3.css",
-    "main.js": "/static/js/main.5b435611.js",
-    "static/media/prestoMoney.png": "/static/media/prestoMoney.7d05cdc8598fab932b7c.png",
+    "main.css": "/static/css/main.12824150.css",
+    "main.js": "/static/js/main.c0d536d5.js",
+    "static/media/prestoMoney.jpeg": "/static/media/prestoMoney.350c728323f89f51532f.jpeg",
     "index.html": "/index.html",
-    "main.db6cf5b3.css.map": "/static/css/main.db6cf5b3.css.map",
-    "main.5b435611.js.map": "/static/js/main.5b435611.js.map"
+    "main.12824150.css.map": "/static/css/main.12824150.css.map",
+    "main.c0d536d5.js.map": "/static/js/main.c0d536d5.js.map"
   },
   "entrypoints": [
-    "static/css/main.db6cf5b3.css",
-    "static/js/main.5b435611.js"
+    "static/css/main.12824150.css",
+    "static/js/main.c0d536d5.js"
   ]
 }
